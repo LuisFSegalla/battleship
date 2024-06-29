@@ -101,7 +101,7 @@ void jogo::rodaJogo()
     tabuleiro auxP1;
     tabuleiro auxP2;
     int a = 0,b = 0;
-    while(vidaP1 > 0 || vidaP2 >> 0)
+    while(vidaP1 > 0 || vidaP2 > 0)
     {
         if(round == 1)
         {
@@ -146,5 +146,11 @@ void jogo::rodaJogo()
             std::cout << std::endl << std::endl;
             round = 1;
         }
+    }
+    if(vidaP1 > vidaP2){
+        std::cout << "Jogador 1 venceu!" << std::endl;
+    }
+    else{
+        std::cout << "Jogador 2 venceu!" << std::endl;
     }
 }
