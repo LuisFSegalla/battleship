@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/batalhaNaval.dir/main.cpp.o CMakeFiles/batalhaNaval.dir/barco.cpp.o CMakeFiles/batalhaNaval.dir/tabuleiro.cpp.o CMakeFiles/batalhaNaval.dir/jogo.cpp.o  -o batalhaNaval 
