@@ -1,1 +1,5 @@
-build/*
+*.o
+*.cmake
+*.make
+*build/
+*.MD
