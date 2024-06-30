@@ -46,6 +46,7 @@ void jogo::inicializaTabuleiros()
     int posX = 0, posY = 0, dir = 0;
     while(contador < 6)
     {
+        std::system("clear");
         tp1->imprimeTabuleiro();
 
         std::cout << "Passe as coordenas (x,y) para o posicionamento da ";
@@ -60,13 +61,13 @@ void jogo::inicializaTabuleiros()
         {
             std::cout << "Não foi possível colocar o barco na posição desejada." << std::endl;
         }
-        // std::cout << "\033[2J\033[1;1H";
     }
 
     std::cout << "Inicializando o tabuleiro do jogador 2" << std::endl;
     contador = 0;
     while(contador < 6)
     {
+        std::system("clear");
         tp2->imprimeTabuleiro();
         std::cout << "Passe as coordenas (x,y) para o posicionamento da ";
         switchBarcos(contador+1);
@@ -75,12 +76,10 @@ void jogo::inicializaTabuleiros()
         if(tp2->posicionaBarco(posX,posY,dir,contador))
         {
             contador++;
-            std::cout << "\033[2J\033[1;1H";
         }
         else
         {
             std::cout << "Não foi possível colocar o barco na posição desejada." << std::endl;
-            std::cout << "\033[2J\033[1;1H";
         }
     }
 }
