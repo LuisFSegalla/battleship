@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-project(batalhaNaval LANGUAGES CXX)
+project(batalhaNaval.exe LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,9 +19,9 @@ find_library(ZeroMQ_LIBRARY
         )
 
 
-add_executable(batalhaNaval main.cpp barco.cpp tabuleiro.cpp jogo.cpp)
+add_executable(batalhaNaval.exe main.cpp barco.cpp tabuleiro.cpp jogo.cpp)
 
 ## add the include directory to our compile directives
-target_include_directories(batalhaNaval PUBLIC ${ZeroMQ_INCLUDE_DIR})
+target_include_directories(batalhaNaval.exe PUBLIC ${ZeroMQ_INCLUDE_DIR})
 ## at the 0mq library to our link directive
-target_link_libraries(batalhaNaval PUBLIC ${ZeroMQ_LIBRARY})
+target_link_libraries(batalhaNaval.exe PUBLIC ${ZeroMQ_LIBRARY})
