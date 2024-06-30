@@ -1,5 +1,11 @@
+cpp/CMakeFiles
+cpp/CMakeCache.txt
+cpp/*.exe
+cpp/Makefile
 *.o
 *.cmake
 *.make
-*build/
+build/
+*CMakeFiles
 *.MD
+.vscode

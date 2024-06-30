@@ -1,3 +1,0 @@
-/home/luis/batalhaNaval/build/CMakeFiles/rebuild_cache.dir
-/home/luis/batalhaNaval/build/CMakeFiles/edit_cache.dir
-/home/luis/batalhaNaval/build/CMakeFiles/batalhaNaval.dir
