@@ -7,8 +7,8 @@
         {
             "type": "cppdbg",
             "request": "launch",
-            "name": "Launch debug",
-            "program": "${workspaceRoot}/build/batalhaNaval",
+            "name": "clientGame",
+            "program": "${workspaceRoot}/build/batalhaNaval.exe",
             "args": [],
             "cwd":"${workspaceFolder}",
         }
