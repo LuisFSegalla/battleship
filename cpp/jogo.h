@@ -13,8 +13,8 @@ private:
     tabuleiro    *tp2;
     unsigned int round;
     unsigned int vida;
-    zmq::socket_t * socketSend;
-    zmq::socket_t * socketRecv;
+    zmq::context_t * ctxtSend;
+    zmq::context_t * ctxtRecv;
 public:
     jogo();
     ~jogo();

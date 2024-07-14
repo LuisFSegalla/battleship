@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     jogo j;
-    j.inicializaTabuleiros();
+    // j.inicializaTabuleiros();
 
     j.rodaJogo();
     return 0;

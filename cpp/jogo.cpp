@@ -33,15 +33,16 @@ jogo::jogo()
     tp2 = new tabuleiro;
     round = 1;
     vida = 23;
-    zmq::context_t context(1);
-    socketSend = new zmq::socket_t(context,ZMQ_PUB);
-    socketRecv = new zmq::socket_t(context,ZMQ_SUB);
-    socketSend->bind("tcp://*:5555");
-    socketRecv->connect("tcp://*:1234");
+    ctxtSend = new zmq::context_t(1);
+    ctxtRecv = new zmq::context_t(1);
 }
 
 jogo::~jogo()
 {
+    ctxtSend->close();
+    ctxtSend->close();
+    delete ctxtSend;
+    delete ctxtRecv;
     delete tp1;
     delete tp2;
 }
@@ -107,69 +108,66 @@ void jogo::rodaJogo()
     tabuleiro auxP1;
     tabuleiro auxP2;
     int a = 0,b = 0;
-    std::stringstream ss;
-    while (vida < 0)
+    zmq::socket_t *sendSocket = new zmq::socket_t(*ctxtSend, ZMQ_PUB);
+    zmq::socket_t *recvSocket = new zmq::socket_t(*ctxtRecv, ZMQ_SUB);
+    std::string endpoint_pub = "tcp://127.0.0.1:5555";
+    std::string endpoint_sub = "tcp://127.0.0.1:1234";
+    try
     {
-        ss << "Player 1 with " << vida << " life points.";
-        zmq::message_t request((void*)ss.str().c_str(), ss.str().size()+1, NULL);
-        socketSend->send(request);
-        zmq_sleep(5);
-        zmq::message_t reply;
-        socketRecv->recv(&reply);
-        std::cout << "Received " << reply.size() << " word.\nMessage: " << (const char*)reply.data() << std::endl;
-        vida--;
+        std::cout << "Trying to connect into " << endpoint_pub << " pub endpoint" << std::endl;
+        sendSocket->bind(endpoint_pub.c_str());
+        if(sendSocket->connected()){
+            std::cout << "Connected to " << endpoint_pub << std::endl;
+        }
     }
-        
-    // while(vidaP1 > 0 || vidaP2 > 0)
-    // {
-    //     if(round == 1)
-    //     {
-    //         std::cout << std::endl << std::endl;
-    //         auxP1.imprimeTabuleiro();
-    //         std::cout << "Jogador 1 faça sua jogada: ";
-    //         std::cin >> a >> b;
-    //         std::cout << std::endl;
+    catch(const std::exception& e)
+    {
+        std::cerr << "[" << endpoint_pub << "]" << e.what() << '\n';
+        return;
+    }
 
-    //         if(auxP1.retPosicao(a,b) != 'X' && tp2->retPosicao(a,b) !=  '*')
-    //         {
-    //             auxP1.insereTabuleiro(a,b,'X');
-    //             vidaP2--;
-    //         }
-    //         if(auxP1.retPosicao(a,b) != 'X' && tp2->retPosicao(a,b) ==  '*')
-    //         {
-    //             auxP1.insereTabuleiro(a,b,'0');
-    //         }
-    //         std::cout << "Tabuleiro do jogador 1 depois da jogada: " << std::endl;
-    //         auxP1.imprimeTabuleiro();
-    //         std::cout << std::endl << std::endl;
-    //         round = 2;
-    //     }
-    //     if(round == 2)
-    //     {
-    //         std::cout << std::endl << std::endl;
-    //         auxP2.imprimeTabuleiro();
-    //         std::cout << "Jogador 2 faça sua jogada: ";
-    //         std::cin >> a >> b;
-    //         std::cout << std::endl;
-    //         if(auxP2.retPosicao(a,b) != 'X' && tp1->retPosicao(a,b) != '*')
-    //         {
-    //             auxP2.insereTabuleiro(a,b,'X');
-    //             vidaP1--;
-    //         }
-    //         if(auxP2.retPosicao(a,b) != 'X' && tp1->retPosicao(a,b) == '*')
-    //         {
-    //             auxP2.insereTabuleiro(a,b,'0');
-    //         }
-    //         std::cout << "Tabuleiro do jogador 2 depois da jogada: " << std::endl;
-    //         auxP2.imprimeTabuleiro();
-    //         std::cout << std::endl << std::endl;
-    //         round = 1;
-    //     }
-    // }
-    // if(vidaP1 > vidaP2){
-    //     std::cout << "Jogador 1 venceu!" << std::endl;
-    // }
-    // else{
-    //     std::cout << "Jogador 2 venceu!" << std::endl;
-    // }
+    try
+    {
+        std::cout << "Trying to connect into " << endpoint_sub << " sub endpoint" << std::endl;
+        recvSocket->setsockopt(ZMQ_SUBSCRIBE, nullptr, 0);
+        // recvSocket->setsockopt(ZMQ_RCVTIMEO,1000);
+        recvSocket->connect(endpoint_sub.c_str());
+        if(recvSocket->connected()){
+            std::cout << "Connected to " << endpoint_sub << std::endl;
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "[" << endpoint_sub << "] " << e.what() << '\n';
+        return;
+    }
+    
+    while (vida > 0)
+    {
+        std::stringstream ss;
+        ss << "Player 1 with " << vida << " life points.";
+
+        // I'm not really sure why I need to do the memcpy to make it work
+        zmq::message_t request(ss.str().size());
+        memcpy((void *)request.data(),ss.str().c_str(),ss.str().size());
+
+        bool status = sendSocket->send(request,0);
+        if(status)
+        {
+            std::cout << "message sent!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Message not sent" << std::endl;
+        }
+        // zmq_sleep(5);
+        zmq::message_t reply;
+        recvSocket->recv(&reply, 0);
+        std::cout << "Received " << reply.size() << " word.\nMessage: " << std::string(static_cast<char*>(reply.data()), reply.size()) << std::endl;
+        vida--;
+        std::cout << "Vidas = " << vida << std::endl;
+    }
+    sendSocket->close();
+    recvSocket->close();
+        
 }
